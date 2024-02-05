@@ -21,6 +21,6 @@ class SDL
     SDL &operator=(const SDL &copy) = delete;
 
     void checkInput();
-    void drawTexture(const Texture &texture, int startX, int startY);
+    void drawTexture(const Texture &texture, int startX, int startY, float scaleX, float scaleY);
     void drawPixel(int x, int y, int color[3]);
 };

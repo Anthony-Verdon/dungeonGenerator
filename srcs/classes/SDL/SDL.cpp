@@ -1,6 +1,7 @@
 #include "SDL.hpp"
 #include "../Texture/Texture.hpp"
 #include <SDL2/SDL.h>
+#include <iostream>
 #include <stdexcept>
 
 #define SCREEN_WIDTH 960
@@ -41,21 +42,28 @@ void SDL::drawPixel(int x, int y, int color[3])
     SDL_RenderDrawPoint(renderer, x, y);
 }
 
-void SDL::drawTexture(const Texture &texture, int startX, int startY)
+void SDL::drawTexture(const Texture &texture, int startX, int startY, float scaleX, float scaleY)
 {
-    for (int x = 0; x < texture.getWidth(); x++)
+    float stepX = 1.0 / scaleX;
+    float x2 = 0;
+    for (int x = 0; x < texture.getWidth() * scaleX; x++)
     {
         if (x + startX < 0 || (int)x + startX >= SCREEN_WIDTH)
             continue;
-        for (int y = 0; y < texture.getHeight(); y++)
+
+        float stepY = 1.0 / scaleY;
+        float y2 = 0;
+        for (int y = 0; y < texture.getHeight() * scaleY; y++)
         {
-            if (y + startY < 0 || x + startY >= SCREEN_WIDTH)
+            if (y + startY < 0 || x + startY >= SCREEN_HEIGHT)
                 continue;
-            int color[3] = {texture.getData()[y * 3 * texture.getWidth() + x * 3],
-                            texture.getData()[y * 3 * texture.getWidth() + x * 3 + 1],
-                            texture.getData()[y * 3 * texture.getWidth() + x * 3 + 2]};
+            int color[3] = {texture.getData()[(int)y2 * 3 * texture.getWidth() + (int)x2 * 3],
+                            texture.getData()[(int)y2 * 3 * texture.getWidth() + (int)x2 * 3 + 1],
+                            texture.getData()[(int)y2 * 3 * texture.getWidth() + (int)x2 * 3 + 2]};
             drawPixel(x + startX, y + startY, color);
+            y2 += stepY;
         }
+        x2 += stepX;
     }
 }
 
@@ -67,7 +75,11 @@ void SDL::updateLoop()
         checkInput();
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
-        drawTexture(newTexture, 0, 0);
+        drawTexture(newTexture, 0, 0, 1, 1);
+        drawTexture(newTexture, 16, 0, 2, 2);
+        drawTexture(newTexture, 48, 0, 0.5, 0.5);
+        drawTexture(newTexture, 0, 32, 2, 1);
+
         SDL_RenderPresent(renderer);
     }
 }
