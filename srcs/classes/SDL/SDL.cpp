@@ -44,26 +44,27 @@ void SDL::drawPixel(int x, int y, int color[3])
 
 void SDL::drawTexture(const Texture &texture, int startX, int startY, float scaleX, float scaleY)
 {
+    float texX = 0;
     float stepX = 1.0 / scaleX;
-    float x2 = 0;
     for (int x = 0; x < texture.getWidth() * scaleX; x++)
     {
         if (x + startX < 0 || (int)x + startX >= SCREEN_WIDTH)
             continue;
 
+        float texY = 0;
         float stepY = 1.0 / scaleY;
-        float y2 = 0;
         for (int y = 0; y < texture.getHeight() * scaleY; y++)
         {
             if (y + startY < 0 || x + startY >= SCREEN_HEIGHT)
                 continue;
-            int color[3] = {texture.getData()[(int)y2 * 3 * texture.getWidth() + (int)x2 * 3],
-                            texture.getData()[(int)y2 * 3 * texture.getWidth() + (int)x2 * 3 + 1],
-                            texture.getData()[(int)y2 * 3 * texture.getWidth() + (int)x2 * 3 + 2]};
+
+            std::vector<int> data = texture.getData();
+            int pixel = (int)texY * 3 * texture.getWidth() + (int)texX * 3;
+            int color[3] = {data[pixel + 0], data[pixel + 1], data[pixel + 2]};
             drawPixel(x + startX, y + startY, color);
-            y2 += stepY;
+            texY += stepY;
         }
-        x2 += stepX;
+        texX += stepX;
     }
 }
 
@@ -79,7 +80,6 @@ void SDL::updateLoop()
         drawTexture(newTexture, 16, 0, 2, 2);
         drawTexture(newTexture, 48, 0, 0.5, 0.5);
         drawTexture(newTexture, 0, 32, 2, 1);
-
         SDL_RenderPresent(renderer);
     }
 }
