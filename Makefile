@@ -1,19 +1,19 @@
-SRCS := $(wildcard srcs/*.c)
-SRCS += $(wildcard srcs/generateMap/*.c)
-SRCS += $(wildcard srcs/parseTexture/*.c)
-SRCS += $(wildcard srcs/sdlFunctions/*.c)
+SRCS := $(wildcard srcs/*.cpp)
+SRCS += $(wildcard srcs/classes/SDL/*.cpp)
+SRCS += $(wildcard srcs/classes/Texture/*.cpp)
+SRCS += $(wildcard srcs/classes/Utils/*.cpp)
 
-OBJS := $(SRCS:.c=.o)
+OBJS := $(SRCS:.cpp=.o)
 
 NAME := dungeonGenerator
 
-COMPILER := clang
+COMPILER := clang++
 
 RM		:= rm -f
 
 CFLAGS 	:= -Wall -Werror -Wextra
 
-LIBRARIES := -lSDL2 -Llibft/ -lft -Llibft/ft_dprintf -lftdprintf
+LIBRARIES := -lSDL2
 
 .c.o:
 			${COMPILER} ${CFLAGS} -c $< -o ${<:.c=.o}
@@ -21,15 +21,12 @@ LIBRARIES := -lSDL2 -Llibft/ -lft -Llibft/ft_dprintf -lftdprintf
 all: 		${NAME}
 
 ${NAME}:	${OBJS}
-			make -C libft/
 			${COMPILER} ${OBJS} -o ${NAME} ${LIBRARIES}
 
 clean:
-			make -C libft/ clean
 			${RM} ${OBJS} ${OBJS} 
 
 fclean: 	clean
-			make -C libft/ fclean
 			${RM} ${NAME} ${NAME}
 
 re:
