@@ -2,6 +2,7 @@ SRCS := $(wildcard srcs/*.cpp)
 SRCS += $(wildcard srcs/classes/SDL/*.cpp)
 SRCS += $(wildcard srcs/classes/Texture/*.cpp)
 SRCS += $(wildcard srcs/classes/Utils/*.cpp)
+SRCS += $(wildcard srcs/classes/DungeonGenerator/*.cpp)
 
 OBJS := $(SRCS:.cpp=.o)
 
@@ -15,8 +16,8 @@ CFLAGS 	:= -Wall -Werror -Wextra
 
 LIBRARIES := -lSDL2
 
-.c.o:
-			${COMPILER} ${CFLAGS} -c $< -o ${<:.c=.o}
+.cpp.o:
+			${COMPILER} ${CFLAGS} -c $< -o ${<:.cpp=.o}
 
 all: 		${NAME}
 

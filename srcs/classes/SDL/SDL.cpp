@@ -76,10 +76,8 @@ void SDL::updateLoop()
         checkInput();
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
-        drawTexture(newTexture, 0, 0, 1, 1);
-        drawTexture(newTexture, 16, 0, 2, 2);
-        drawTexture(newTexture, 48, 0, 0.5, 0.5);
-        drawTexture(newTexture, 0, 32, 2, 1);
+        drawTexture(newTexture, SCREEN_WIDTH / 2 - newTexture.getWidth() * 5,
+                    SCREEN_HEIGHT / 2 - newTexture.getHeight() * 5, 5, 5);
         SDL_RenderPresent(renderer);
     }
 }
