@@ -1,23 +1,8 @@
 #pragma once
 
-#include "../Texture/Texture.hpp"
+#include "../Tile/Tile.hpp"
 #include <string>
 #include <vector>
-
-enum e_Direction
-{
-    NORTH,
-    EAST,
-    SOUTH,
-    WEST
-};
-
-typedef struct s_tile
-{
-    Texture texture;
-    int id;
-    std::vector<struct s_tile> possibleNeighbors[4];
-} t_tile;
 
 typedef struct s_map
 {
@@ -28,7 +13,12 @@ typedef struct s_map
 
 class DungeonGenerator
 {
+  private:
+    static std::vector<Tile> parseRuleFile(const std::string &rulePath);
+
   public:
+    static bool isRuleFileValid(const std::string &rulePath);
+
     static t_map generate(int width, int height, const std::string &rulePath);
 };
 

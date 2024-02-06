@@ -3,6 +3,7 @@ SRCS += $(wildcard srcs/classes/SDL/*.cpp)
 SRCS += $(wildcard srcs/classes/Texture/*.cpp)
 SRCS += $(wildcard srcs/classes/Utils/*.cpp)
 SRCS += $(wildcard srcs/classes/DungeonGenerator/*.cpp)
+SRCS += $(wildcard srcs/classes/Tile/*.cpp)
 
 OBJS := $(SRCS:.cpp=.o)
 

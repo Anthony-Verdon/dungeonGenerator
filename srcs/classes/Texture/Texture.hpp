@@ -12,6 +12,7 @@ class Texture
     int height;
     unsigned int valueMax;
     std::vector<int> data;
+    std::string path;
 
   public:
     Texture(const std::string &path);
@@ -23,4 +24,5 @@ class Texture
     int getHeight() const;
     unsigned int getValueMax() const;
     std::vector<int> getData() const;
+    std::string getPath() const;
 };

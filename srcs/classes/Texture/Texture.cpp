@@ -4,8 +4,9 @@
 #include <stdexcept>
 #include <vector>
 
-Texture::Texture(const std::string &path)
+Texture::Texture(const std::string &texturePath)
 {
+    path = texturePath;
     std::stringstream textureStream;
     std::string line;
     std::vector<std::string> words;
@@ -100,4 +101,9 @@ unsigned int Texture::getValueMax() const
 std::vector<int> Texture::getData() const
 {
     return data;
+}
+
+std::string Texture::getPath() const
+{
+    return path;
 }
