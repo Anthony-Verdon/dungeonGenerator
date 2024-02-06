@@ -1,6 +1,7 @@
 #include "DungeonGenerator.hpp"
+#include "../../../jsoncpp_x64-linux/include/json/json.h"
+#include <fstream>
 #include <iostream>
-
 /*information example for rule
     path {string}
     id {number}
@@ -16,8 +17,16 @@
 
 t_map DungeonGenerator::generate(int width, int height, const std::string &rulePath)
 {
+
+    std::ifstream ifs(rulePath);
+    Json::Reader reader;
+    Json::Value obj;
+    reader.parse(ifs, obj);
+    std::cout << obj["tiles"][0]["path"] << std::endl;
+
+    //--------
     srand(time(NULL));
-    (void)rulePath;
+
     t_map map;
     map.width = width;
     map.height = height;

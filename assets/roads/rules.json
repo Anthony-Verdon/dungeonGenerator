@@ -1,0 +1,34 @@
+{
+  "tiles": [{
+      "path": "assets/roads/empty.ppm",
+      "id": 0,
+      "possibilityNorth": [0, 3],
+      "possibilitySouth": [0, 3],
+      "possibilityWest": [0, 2],
+      "possibilityEast": [0, 2]
+    },
+    {
+      "path": "assets/roads/fourDirection.ppm",
+      "id": 1,
+      "possibilityNorth": [1, 2],
+      "possibilitySouth": [1, 2],
+      "possibilityWest": [1, 3],
+      "possibilityEast": [1, 3]
+    },
+    {
+      "path": "assets/roads/NorthSouth.ppm",
+      "id": 2,
+      "possibilityNorth": [1, 2],
+      "possibilitySouth": [1, 2],
+      "possibilityWest": [0, 2],
+      "possibilityEast": [0, 2]
+    },
+    {
+      "path": "assets/roads/WestEast.ppm",
+      "id": 3,
+      "possibilityNorth": [0, 3],
+      "possibilitySouth": [0, 3],
+      "possibilityWest": [1, 3],
+      "possibilityEast": [1, 3]
+    }]
+}

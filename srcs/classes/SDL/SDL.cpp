@@ -70,6 +70,7 @@ void SDL::drawTexture(const Texture &texture, int startX, int startY, float scal
 // maybe modify the code so SDL isn't a class
 void SDL::updateLoop(t_map map)
 {
+    return;
     int scale = 2;
     Texture oneDoor("assets/oneDoor.ppm");
     Texture twoDoor("assets/twoDoorFront.ppm");

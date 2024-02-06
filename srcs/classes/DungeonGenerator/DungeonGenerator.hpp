@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Texture/Texture.hpp"
 #include <string>
 #include <vector>
 
@@ -13,8 +14,8 @@ enum e_Direction
 
 typedef struct s_tile
 {
-    std::string path;
-    float probability;
+    Texture texture;
+    int id;
     std::vector<struct s_tile> possibleNeighbors[4];
 } t_tile;
 

@@ -1,9 +1,0 @@
-{
-  "path": "",
-  "id": 1,
-  "probability": 0.5,
-  "possibilityNorth": [1],
-  "possibilitySouth": [1],
-  "possibilityWest": [1],
-  "possibilityEast": [1]
-}

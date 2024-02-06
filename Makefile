@@ -12,9 +12,9 @@ COMPILER := clang++
 
 RM		:= rm -f
 
-CFLAGS 	:= -Wall -Werror -Wextra
+CFLAGS 	:= -Wall -Werror -Wextra 
 
-LIBRARIES := -lSDL2
+LIBRARIES := -lSDL2 -Ljsoncpp_x64-linux/lib -ljsoncpp
 
 .cpp.o:
 			${COMPILER} ${CFLAGS} -c $< -o ${<:.cpp=.o}
