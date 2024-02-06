@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../DungeonGenerator/DungeonGenerator.hpp"
 #include "../Texture/Texture.hpp"
 #include <SDL2/SDL.h>
 
@@ -9,7 +10,7 @@ class SDL
     SDL();
     ~SDL();
 
-    void updateLoop();
+    void updateLoop(t_map map);
     SDL_Window *getWindow();
     SDL_Renderer *getRenderer();
 

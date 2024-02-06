@@ -1,7 +1,6 @@
 #include "SDL.hpp"
 #include "../Texture/Texture.hpp"
 #include <SDL2/SDL.h>
-#include <iostream>
 #include <stdexcept>
 
 #define SCREEN_WIDTH 960
@@ -68,16 +67,38 @@ void SDL::drawTexture(const Texture &texture, int startX, int startY, float scal
     }
 }
 
-void SDL::updateLoop()
+// maybe modify the code so SDL isn't a class
+void SDL::updateLoop(t_map map)
 {
-    Texture newTexture("assets/fourDoor.ppm");
+    int scale = 2;
+    Texture oneDoor("assets/oneDoor.ppm");
+    Texture twoDoor("assets/twoDoorFront.ppm");
+    Texture fourDoor("assets/fourDoor.ppm");
     while (true)
     {
         checkInput();
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
-        drawTexture(newTexture, SCREEN_WIDTH / 2 - newTexture.getWidth() * 5,
-                    SCREEN_HEIGHT / 2 - newTexture.getHeight() * 5, 5, 5);
+        for (int x = 0; x < map.width; x++)
+        {
+            for (int y = 0; y < map.height; y++)
+            {
+                Texture *textureToDraw = NULL;
+                switch (map.data[x][y])
+                {
+                case 0:
+                    textureToDraw = &oneDoor;
+                    break;
+                case 1:
+                    textureToDraw = &twoDoor;
+                    break;
+                case 2:
+                    textureToDraw = &fourDoor;
+                    break;
+                }
+                drawTexture(*textureToDraw, x * 16 * scale, y * 16 * scale, scale, scale);
+            }
+        }
         SDL_RenderPresent(renderer);
     }
 }

@@ -8,11 +8,11 @@ int main(void)
 {
     try
     {
-        std::cout << DungeonGenerator::generate(10, 10, "") << std::endl;
-
+        t_map mapGenerated = DungeonGenerator::generate(5, 5, "");
+        std::cout << mapGenerated << std::endl;
         SDL instance;
 
-        // instance.updateLoop();
+        instance.updateLoop(mapGenerated);
         return (EXIT_SUCCESS);
     }
     catch (std::exception exception)

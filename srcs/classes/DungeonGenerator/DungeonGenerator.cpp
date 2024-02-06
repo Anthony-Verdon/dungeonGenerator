@@ -16,15 +16,19 @@
 
 t_map DungeonGenerator::generate(int width, int height, const std::string &rulePath)
 {
+    srand(time(NULL));
     (void)rulePath;
-    std::vector<int> emptyLine;
-    for (int i = 0; i < width; i++)
-        emptyLine.push_back(-1);
     t_map map;
     map.width = width;
     map.height = height;
-    for (int i = 0; i < height; i++)
-        map.data.push_back(emptyLine);
+
+    for (int y = 0; y < height; y++)
+    {
+        std::vector<int> newLine;
+        for (int x = 0; x < width; x++)
+            newLine.push_back((rand() % 3));
+        map.data.push_back(newLine);
+    }
 
     return (map);
 }
