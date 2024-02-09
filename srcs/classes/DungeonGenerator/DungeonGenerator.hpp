@@ -30,7 +30,7 @@ class DungeonGenerator
     static std::vector<Tile> parseRuleFile(const std::string &rulePath);
     static t_map initMap(int width, int height, const std::vector<Tile> &tiles);
     static void defineTile(t_map &map, const std::vector<Tile> &tiles, t_point coord);
-    static void updatePossiblesTiles(std::vector<int> &a, const std::vector<int> &b);
+    static void updateFuturesNeigbors(t_map &map, const std::vector<Tile> &tiles, t_point coord);
 
   public:
     static bool isRuleFileValid(const std::string &rulePath);

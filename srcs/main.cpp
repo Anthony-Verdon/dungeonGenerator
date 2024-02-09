@@ -9,7 +9,7 @@ int main(void)
     {
 
         t_map mapGenerated = DungeonGenerator::generate(5, 5, "assets/roads/rules.json");
-        std::cout << "mapGenerated: " << std::endl << mapGenerated << std::endl;
+        std::cout << std::endl << "mapGenerated: " << std::endl << mapGenerated << std::endl;
         std::cout << "start render " << std::endl;
         SDL instance;
 
