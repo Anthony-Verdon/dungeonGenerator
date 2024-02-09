@@ -3,16 +3,18 @@
 #include <cstdlib>
 #include <exception>
 #include <iostream>
-
 int main(void)
 {
     try
     {
+
         t_map mapGenerated = DungeonGenerator::generate(5, 5, "assets/roads/rules.json");
-        std::cout << mapGenerated << std::endl;
+        std::cout << "mapGenerated: " << std::endl << mapGenerated << std::endl;
+        std::cout << "start render " << std::endl;
         SDL instance;
 
         instance.updateLoop(mapGenerated);
+
         return (EXIT_SUCCESS);
     }
     catch (const std::exception &exception)

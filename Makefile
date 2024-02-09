@@ -13,7 +13,7 @@ COMPILER := clang++
 
 RM		:= rm -f
 
-CFLAGS 	:= -Wall -Werror -Wextra 
+CFLAGS 	:= -Wall -Werror -Wextra -g
 
 LIBRARIES := -lSDL2 -Ljsoncpp_x64-linux/lib -ljsoncpp
 

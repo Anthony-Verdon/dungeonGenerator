@@ -70,36 +70,43 @@ void SDL::drawTexture(const Texture &texture, int startX, int startY, float scal
 // maybe modify the code so SDL isn't a class
 void SDL::updateLoop(t_map map)
 {
-    return;
     int scale = 2;
-    Texture oneDoor("assets/oneDoor.ppm");
-    Texture twoDoor("assets/twoDoorFront.ppm");
-    Texture fourDoor("assets/fourDoor.ppm");
+    Texture empty("assets/roads/empty.ppm");
+    Texture fourDirection("assets/roads/fourDirection.ppm");
+    Texture NorthSouth("assets/roads/NorthSouth.ppm");
+    Texture WestEast("assets/roads/WestEast.ppm");
     while (true)
     {
         checkInput();
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderClear(renderer);
-        for (int x = 0; x < map.width; x++)
-        {
-            for (int y = 0; y < map.height; y++)
+        for (int y = 0; y < map.height; y++)
+
+            for (int x = 0; x < map.width; x++)
             {
+                if (!map.data[y][x].isDefined)
+                {
+                    drawTexture(empty, x * 16 * scale, y * 16 * scale, scale, scale);
+                    continue;
+                }
                 Texture *textureToDraw = NULL;
-                switch (map.data[x][y])
+                switch (map.data[y][x].possiblesTilesID[0])
                 {
                 case 0:
-                    textureToDraw = &oneDoor;
+                    textureToDraw = &empty;
                     break;
                 case 1:
-                    textureToDraw = &twoDoor;
+                    textureToDraw = &fourDirection;
                     break;
                 case 2:
-                    textureToDraw = &fourDoor;
+                    textureToDraw = &NorthSouth;
+                    break;
+                case 3:
+                    textureToDraw = &WestEast;
                     break;
                 }
                 drawTexture(*textureToDraw, x * 16 * scale, y * 16 * scale, scale, scale);
             }
-        }
         SDL_RenderPresent(renderer);
     }
 }
