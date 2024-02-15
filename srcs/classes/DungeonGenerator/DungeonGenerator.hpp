@@ -13,6 +13,7 @@ typedef struct s_point
 typedef struct s_possibleTiles
 {
     bool isDefined;
+    bool hasBeenUpdated;
     int nbPossibleTiles;
     std::vector<int> possiblesTilesID;
 } t_possibleTiles;
@@ -29,8 +30,13 @@ class DungeonGenerator
   private:
     static std::vector<Tile> parseRuleFile(const std::string &rulePath);
     static t_map initMap(int width, int height, const std::vector<Tile> &tiles);
-    static void defineTile(t_map &map, const std::vector<Tile> &tiles, t_point coord);
-    static void updateFuturesNeigbors(t_map &map, const std::vector<Tile> &tiles, t_point coord);
+    static void defineTile(t_map &map, t_point coord);
+    static void resetUpdateMap(t_map &map);
+    static void updateNeighbors(t_map &map, const std::vector<Tile> &tiles, t_point coord);
+    static bool isNeighborValid(t_map &map, std::pair<int, t_point> dictionnary, t_point coord);
+    static std::vector<int> combineAllPossibleTiles(t_map map, const std::vector<Tile> &tiles,
+                                                    t_possibleTiles &neighborTile, std::pair<int, t_point> dictionnary,
+                                                    t_point coord);
 
   public:
     static bool isRuleFileValid(const std::string &rulePath);
