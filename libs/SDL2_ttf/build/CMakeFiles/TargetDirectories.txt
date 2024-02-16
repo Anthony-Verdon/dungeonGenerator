@@ -1,0 +1,9 @@
+/nfs/homes/nlocusso/spe_project/doom-nukem/libs/SDL2_ttf/build/CMakeFiles/SDL2_ttf.dir
+/nfs/homes/nlocusso/spe_project/doom-nukem/libs/SDL2_ttf/build/CMakeFiles/glfont.dir
+/nfs/homes/nlocusso/spe_project/doom-nukem/libs/SDL2_ttf/build/CMakeFiles/showfont.dir
+/nfs/homes/nlocusso/spe_project/doom-nukem/libs/SDL2_ttf/build/CMakeFiles/edit_cache.dir
+/nfs/homes/nlocusso/spe_project/doom-nukem/libs/SDL2_ttf/build/CMakeFiles/rebuild_cache.dir
+/nfs/homes/nlocusso/spe_project/doom-nukem/libs/SDL2_ttf/build/CMakeFiles/list_install_components.dir
+/nfs/homes/nlocusso/spe_project/doom-nukem/libs/SDL2_ttf/build/CMakeFiles/install.dir
+/nfs/homes/nlocusso/spe_project/doom-nukem/libs/SDL2_ttf/build/CMakeFiles/install/local.dir
+/nfs/homes/nlocusso/spe_project/doom-nukem/libs/SDL2_ttf/build/CMakeFiles/install/strip.dir

@@ -1,11 +1,13 @@
 #include "DungeonGenerator.hpp"
-#include "../../../jsoncpp_x64-linux/include/json/json.h"
+#include "../../../libs/jsoncpp_x64-linux/include/json/json.h"
 #include <algorithm>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <map>
 #include <memory>
+#include <stdexcept>
+#include <string>
 #include <vector>
 
 std::map<int, std::string> directionsMap{
@@ -24,7 +26,51 @@ const std::map<int, t_point> modifiersDirection{
 
 bool DungeonGenerator::isRuleFileValid(const std::string &rulePath)
 {
-    (void)rulePath;
+    std::ifstream ifs(rulePath);
+    Json::Reader reader;
+    Json::Value obj;
+    reader.parse(ifs, obj);
+
+    try
+    {
+        if (!obj)
+            throw(std::runtime_error("rule file invalid: can't read " + rulePath));
+
+        Json::Value::Members members = obj.getMemberNames();
+        if (members.size() != 1 || !obj.isMember("tiles"))
+            throw(std::runtime_error("rule file invalid: no member \"tiles\" or too much members"));
+
+        Json::Value tiles = obj["tiles"];
+        if (!tiles.isArray() || tiles.size() < 1)
+            throw(std::runtime_error("rule file invalid: \"tiles\" isn't an array or has no value in it"));
+        for (unsigned int i = 0; i < tiles.size(); i++)
+        {
+            Json::Value::Members tile = tiles[i].getMemberNames();
+            if (!tiles[i].isMember("path") || !tiles[i]["path"].isString())
+                throw(std::runtime_error("rule file invalid: \"tiles\" element \"" + std::to_string(i) +
+                                         "\" has no value \"path\" or it value isn't a string"));
+            for (auto it = directionsMap.begin(); it != directionsMap.end(); it++)
+            {
+                if (!tiles[i].isMember(it->second) || !tiles[i][it->second].isArray() ||
+                    tiles[i][it->second].size() == 0)
+                    throw(std::runtime_error("rule file invalid: \"tiles\" element \"" + std::to_string(i) +
+                                             "\" has no value \"" + it->second +
+                                             "\", it value isn't an array or it has no element in it"));
+                for (unsigned int j = 0; j < tiles[i][it->second].size(); j++)
+                {
+                    if (!tiles[i][it->second][j].isInt() || tiles[i][it->second][j] < 0 ||
+                        tiles[i][it->second][j] >= tiles.size())
+                        throw(std::runtime_error("rule file invalid: \"tiles\" element [" + std::to_string(i) + "][" +
+                                                 std::to_string(j) + "] isn't an int or is an incorrect value"));
+                }
+            }
+        }
+    }
+    catch (const std::exception &exception)
+    {
+        std::cout << exception.what() << std::endl;
+        return (false);
+    }
     return (true);
 }
 

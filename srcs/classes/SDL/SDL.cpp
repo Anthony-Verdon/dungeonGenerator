@@ -1,8 +1,12 @@
 #include "SDL.hpp"
 #include "../Texture/Texture.hpp"
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_events.h>
+#include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_keycode.h>
-#include <memory>
+#include <SDL2/SDL_render.h>
+#include <SDL2/SDL_surface.h>
+#include <iostream>
 #include <stdexcept>
 
 #define SCREEN_WIDTH 960
@@ -26,18 +30,28 @@ SDL::SDL()
         throw(std::runtime_error("SDL constructor: SDL_CreateRenderer failed"));
 
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-    SDL_ShowCursor(SDL_DISABLE);
 
+    if (TTF_Init() != 0)
+        throw(std::runtime_error("SDL constructor: TTF_Init failed"));
+    font = TTF_OpenFont("fonts/ThaleahFat.ttf", 25);
+    if (!font)
+        throw(std::runtime_error("SDL constructor: TTF_OpenFont failed"));
+
+    SDL_StartTextInput();
     start();
     updateLoop();
 }
 
 SDL::~SDL()
 {
+    SDL_StopTextInput();
     if (renderer)
         SDL_DestroyRenderer(renderer);
     if (window)
         SDL_DestroyWindow(window);
+    if (font)
+        TTF_CloseFont(font);
+    TTF_Quit();
 }
 
 void SDL::drawPixel(int x, int y, int color[3])
@@ -78,6 +92,20 @@ void SDL::start()
     data.map = DungeonGenerator::generateMap(20, 20, "assets/roads/rules.json");
 }
 
+void SDL::renderText(const std::string &text, int x, int y)
+{
+    SDL_Color color = {0, 0, 0, 255};
+    SDL_Surface *surface = TTF_RenderText_Solid(font, text.c_str(), color);
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
+    int texW;
+    int texH;
+    SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+    SDL_Rect rect = {x, y, texW, texH};
+    SDL_RenderCopy(renderer, texture, NULL, &rect);
+    SDL_DestroyTexture(texture);
+    SDL_FreeSurface(surface);
+}
+
 void SDL::updateLoop()
 {
     while (true)
@@ -86,13 +114,14 @@ void SDL::updateLoop()
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderClear(renderer);
         for (int y = 0; y < data.map.height; y++)
-
+        {
             for (int x = 0; x < data.map.width; x++)
             {
                 std::shared_ptr<Texture> texture =
                     data.map.tileset[data.map.data[y][x].possiblesTilesID[0]].getTexture();
                 drawTexture(*texture, x * 16 * data.scale, y * 16 * data.scale, data.scale, data.scale);
             }
+        }
         SDL_RenderPresent(renderer);
     }
 }
@@ -117,6 +146,18 @@ void SDL::checkInput()
     }
 }
 
+void SDL::askRulePath()
+{
+    std::string entry;
+    std::cout << "enter rule path" << std::endl;
+    getline(std::cin, entry);
+    if (DungeonGenerator::isRuleFileValid(entry))
+    {
+        std::cout << "rule path saved" << std::endl;
+        data.rulepath = entry;
+    }
+}
+
 void SDL::parseKeyDown(int keydown)
 {
     switch (keydown)
@@ -124,11 +165,13 @@ void SDL::parseKeyDown(int keydown)
     case SDLK_ESCAPE:
         exit(0);
         break;
-    case SDLK_e:
-        data.map = DungeonGenerator::generateMap(20, 20, "assets/roads/rules.json");
+    case SDLK_g:
+        data.map = DungeonGenerator::generateMap(20, 20, data.rulepath);
         break;
     case SDLK_f:
         DungeonGenerator::generateFile(data.map);
+    case SDLK_r:
+        askRulePath();
     default:
         break;
     }

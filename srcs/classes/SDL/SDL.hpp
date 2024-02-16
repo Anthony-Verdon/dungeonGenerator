@@ -1,11 +1,16 @@
 #pragma once
 
+#include "../../../libs/SDL2_ttf/SDL_ttf.h"
 #include "../DungeonGenerator/DungeonGenerator.hpp"
 #include "../Texture/Texture.hpp"
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_keycode.h>
+#include <SDL2/SDL_surface.h>
+#include <string>
 
 typedef struct s_data
 {
+    std::string rulepath;
     int scale;
     t_map map;
 } t_data;
@@ -18,6 +23,7 @@ class SDL
 
     SDL_Window *getWindow();
     SDL_Renderer *getRenderer();
+    TTF_Font *font;
 
   private:
     SDL_Window *window;
@@ -33,4 +39,7 @@ class SDL
     void parseKeyDown(int keydown);
     void drawTexture(const Texture &texture, int startX, int startY, float scaleX, float scaleY);
     void drawPixel(int x, int y, int color[3]);
+    void renderText(const std::string &text, int x, int y);
+
+    void askRulePath();
 };

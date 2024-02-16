@@ -15,7 +15,7 @@ RM		:= rm -f
 
 CFLAGS 	:= -Wall -Werror -Wextra -g
 
-LIBRARIES := -lSDL2 -Ljsoncpp_x64-linux/lib -ljsoncpp
+LIBRARIES := -lSDL2 -Llibs/jsoncpp_x64-linux/lib -ljsoncpp -Llibs/SDL2_ttf/build -lSDL2_ttf-2.0
 
 .cpp.o:
 			${COMPILER} ${CFLAGS} -c $< -o ${<:.cpp=.o}
