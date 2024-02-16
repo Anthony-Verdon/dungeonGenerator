@@ -37,7 +37,7 @@ void DungeonGenerator::resetUpdateMap(t_map &map)
     }
 }
 
-t_map DungeonGenerator::generate(int width, int height, const std::string &rulePath)
+t_map DungeonGenerator::generateMap(int width, int height, const std::string &rulePath)
 {
     t_map map = initMap(width, height, rulePath);
     srand(time(NULL));
@@ -103,6 +103,7 @@ t_map DungeonGenerator::initMap(int width, int height, const std::string &rulePa
     t_map map;
     map.width = width;
     map.height = height;
+    map.rulePath = rulePath;
     map.tileset = parseRuleFile(rulePath);
     t_possibleTiles initPossiblesTiles;
     for (unsigned int i = 0; i < map.tileset.size(); i++)
@@ -179,6 +180,20 @@ std::vector<int> DungeonGenerator::combineAllPossibleTiles(t_map map, t_possible
                                         [&B](int x) { return std::find(B.begin(), B.end(), x) == B.end(); }),
                          possiblesTiles.end());
     return (possiblesTiles);
+}
+
+void DungeonGenerator::generateFile(t_map map)
+{
+    std::ofstream fileGenerated("lastMapGenerated.txt");
+    fileGenerated << map.width << " " << map.height << std::endl;
+    fileGenerated << map.rulePath << std::endl;
+    for (int y = 0; y < map.height; y++)
+    {
+        for (int x = 0; x < map.width; x++)
+            fileGenerated << map.data[y][x].possiblesTilesID[0] << " ";
+        fileGenerated << std::endl;
+    }
+    fileGenerated.close();
 }
 
 std::ostream &operator<<(std::ostream &os, const t_map &instance)

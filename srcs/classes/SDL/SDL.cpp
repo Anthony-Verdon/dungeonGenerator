@@ -1,6 +1,7 @@
 #include "SDL.hpp"
 #include "../Texture/Texture.hpp"
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_keycode.h>
 #include <memory>
 #include <stdexcept>
 
@@ -26,6 +27,9 @@ SDL::SDL()
 
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     SDL_ShowCursor(SDL_DISABLE);
+
+    start();
+    updateLoop();
 }
 
 SDL::~SDL()
@@ -68,21 +72,26 @@ void SDL::drawTexture(const Texture &texture, int startX, int startY, float scal
     }
 }
 
-// maybe modify the code so SDL isn't a class
-void SDL::updateLoop(t_map map)
+void SDL::start()
 {
-    int scale = 2;
+    data.scale = 1;
+    data.map = DungeonGenerator::generateMap(20, 20, "assets/roads/rules.json");
+}
+
+void SDL::updateLoop()
+{
     while (true)
     {
         checkInput();
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderClear(renderer);
-        for (int y = 0; y < map.height; y++)
+        for (int y = 0; y < data.map.height; y++)
 
-            for (int x = 0; x < map.width; x++)
+            for (int x = 0; x < data.map.width; x++)
             {
-                std::shared_ptr<Texture> texture = map.tileset[map.data[y][x].possiblesTilesID[0]].getTexture();
-                drawTexture(*texture, x * 16 * scale, y * 16 * scale, scale, scale);
+                std::shared_ptr<Texture> texture =
+                    data.map.tileset[data.map.data[y][x].possiblesTilesID[0]].getTexture();
+                drawTexture(*texture, x * 16 * data.scale, y * 16 * data.scale, data.scale, data.scale);
             }
         SDL_RenderPresent(renderer);
     }
@@ -98,10 +107,30 @@ void SDL::checkInput()
         {
         case SDL_QUIT:
             exit(0);
+            break;
         case SDL_KEYDOWN:
-            if (event.key.keysym.sym == SDLK_ESCAPE)
-                exit(0);
+            parseKeyDown(event.key.keysym.sym);
+            break;
+        default:
+            break;
         }
+    }
+}
+
+void SDL::parseKeyDown(int keydown)
+{
+    switch (keydown)
+    {
+    case SDLK_ESCAPE:
+        exit(0);
+        break;
+    case SDLK_e:
+        data.map = DungeonGenerator::generateMap(20, 20, "assets/roads/rules.json");
+        break;
+    case SDLK_f:
+        DungeonGenerator::generateFile(data.map);
+    default:
+        break;
     }
 }
 

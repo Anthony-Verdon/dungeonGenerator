@@ -22,6 +22,7 @@ typedef struct s_map
 {
     int width;
     int height;
+    std::string rulePath;
     std::vector<Tile> tileset;
     std::vector<std::vector<t_possibleTiles>> data;
 } t_map;
@@ -29,6 +30,7 @@ typedef struct s_map
 class DungeonGenerator
 {
   private:
+    static bool isRuleFileValid(const std::string &rulePath);
     static t_map initMap(int width, int height, const std::string &rulePath);
     static std::vector<Tile> parseRuleFile(const std::string &rulePath);
     static void defineTile(t_map &map, t_point coord);
@@ -39,8 +41,8 @@ class DungeonGenerator
                                                     int direction);
 
   public:
-    static t_map generate(int width, int height, const std::string &rulePath);
-    static bool isRuleFileValid(const std::string &rulePath);
+    static t_map generateMap(int width, int height, const std::string &rulePath);
+    static void generateFile(t_map map);
 };
 
 std::ostream &operator<<(std::ostream &os, const t_map &instance);
