@@ -1,0 +1,125 @@
+{
+  "tiles": [{
+      //0
+      "path": "assets/dungeon/oneDoor/eastDoor.ppm",
+      "possibilityNorth": [0, 1, 3, 4, 5, 7, 12],
+      "possibilitySouth": [0, 2, 3, 4, 8, 9, 13],
+      "possibilityWest": [1, 2, 3, 6,7,9,11],
+      "possibilityEast": [3, 4, 7, 9, 11, 12, 13, 14]
+    },
+    {
+      //1
+      "path": "assets/dungeon/oneDoor/northDoor.ppm",
+      "possibilityNorth": [2,6,8,9,10,11,13,14],
+      "possibilitySouth": [0,2,3,4,8,9,13],
+      "possibilityWest": [1,2,3,6,7,9,11],
+      "possibilityEast": [0,1,2,5,6,8,10]
+    },
+    {
+      //2
+      "path": "assets/dungeon/oneDoor/southDoor.ppm",
+      "possibilityNorth":  [0,1,3,4,5,7,12],
+      "possibilitySouth":  [1,5,6,7,10,11,12,14],
+      "possibilityWest":  [1,2,3,6,7,9,11],
+      "possibilityEast":  [0,1,2,5,6,8,10]
+    },
+    {
+      //3
+      "path": "assets/dungeon/oneDoor/westDoor.ppm",
+      "possibilityNorth":  [0,1,3,4,5,7,12],
+      "possibilitySouth":  [0,2,3,4,8,9,13],
+      "possibilityWest":  [0,4,5,8,10,12,13,14],
+      "possibilityEast":  [0,1,2,5,6,8,10]
+    },
+
+    {
+      //4
+      "path": "assets/dungeon/twoDoors/doorEastWest.ppm",
+      "possibilityNorth":  [0,1,3,4,5,7,12],
+      "possibilitySouth":  [0, 2, 3, 4, 8, 9, 13],
+      "possibilityWest":  [0,4,5,8,10,12,13,14],
+      "possibilityEast":  [3, 4, 7, 9, 11, 12, 13, 14]
+    },
+    {
+      //5
+      "path": "assets/dungeon/twoDoors/doorNorthEast.ppm",
+      "possibilityNorth":  [2,6,8,9,10,11,13,14],
+      "possibilitySouth":  [0, 2, 3, 4, 8, 9, 13],
+      "possibilityWest":  [1, 2, 3, 6,7,9,11],
+      "possibilityEast":  [3, 4, 7, 9, 11, 12, 13, 14]
+    },
+    {
+      //6
+      "path": "assets/dungeon/twoDoors/doorNorthSouth.ppm",
+      "possibilityNorth":  [2,6,8,9,10,11,13,14],
+      "possibilitySouth":  [1,5,6,7,10,11,12,14],
+      "possibilityWest":  [1, 2, 3, 6,7,9,11],
+      "possibilityEast":  [0,1,2,5,6,8,10]
+    },
+    {
+      //7
+      "path": "assets/dungeon/twoDoors/doorNorthWest.ppm",
+      "possibilityNorth":  [2,6,8,9,10,11,13,14],
+      "possibilitySouth":  [0, 2, 3, 4, 8, 9, 13],
+      "possibilityWest":  [0,4,5,8,10,12,13,14],
+      "possibilityEast":  [0,1,2,5,6,8,10]
+    },
+    {
+      //8
+      "path": "assets/dungeon/twoDoors/doorSouthEast.ppm",
+      "possibilityNorth":  [0,1,3,4,5,7,12],
+      "possibilitySouth":  [1,5,6,7,10,11,12,14],
+      "possibilityWest": [1, 2, 3, 6,7,9,11],
+      "possibilityEast":  [3, 4, 7, 9, 11, 12, 13, 14]
+    },
+    {
+      //9
+      "path": "assets/dungeon/twoDoors/doorSouthWest.ppm",
+      "possibilityNorth":  [0,1,3,4,5,7,12],
+      "possibilitySouth":  [1,5,6,7,10,11,12,14],
+      "possibilityWest":  [0,4,5,8,10,12,13,14],
+      "possibilityEast": [0,1,2,5,6,8,10]
+    },
+
+    {
+      //10
+      "path": "assets/dungeon/threeDoors/doorNorthSouthEast.ppm",
+      "possibilityNorth":  [2,6,8,9,10,11,13,14],
+      "possibilitySouth":  [1,5,6,7,10,11,12,14],
+      "possibilityWest": [1, 2, 3, 6,7,9,11],
+      "possibilityEast":  [3, 4, 7, 9, 11, 12, 13, 14]
+    },
+    {
+      //11
+      "path": "assets/dungeon/threeDoors/doorNorthSouthWest.ppm",
+      "possibilityNorth":  [2,6,8,9,10,11,13,14],
+      "possibilitySouth":  [1,5,6,7,10,11,12,14],
+      "possibilityWest":  [0,4,5,8,10,12,13,14],
+      "possibilityEast":  [0,1,2,5,6,8,10]
+    },
+    {
+      //12
+      "path": "assets/dungeon/threeDoors/doorWestNorthEast.ppm",
+      "possibilityNorth":  [2,6,8,9,10,11,13,14],
+      "possibilitySouth":  [0, 2, 3, 4, 8, 9, 13],
+      "possibilityWest":  [0,4,5,8,10,12,13,14],
+      "possibilityEast":  [3, 4, 7, 9, 11, 12, 13, 14]
+    },
+    {
+      //13
+      "path": "assets/dungeon/threeDoors/doorWestSouthEast.ppm",
+      "possibilityNorth":  [0,1,3,4,5,7,12],
+      "possibilitySouth":  [1,5,6,7,10,11,12,14],
+      "possibilityWest":  [0,4,5,8,10,12,13,14],
+      "possibilityEast":  [3, 4, 7, 9, 11, 12, 13, 14]
+    },
+
+    {
+      //14
+      "path": "assets/dungeon/fourDoor.ppm",
+      "possibilityNorth":  [2,6,8,9,10,11,13,14],
+      "possibilitySouth":  [1,5,6,7,10,11,12,14],
+      "possibilityWest":  [0,4,5,8,10,12,13,14],
+      "possibilityEast":  [3, 4, 7, 9, 11, 12, 13, 14]
+    }]
+}

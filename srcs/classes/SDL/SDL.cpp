@@ -1,6 +1,7 @@
 #include "SDL.hpp"
 #include "../Texture/Texture.hpp"
 #include <SDL2/SDL.h>
+#include <memory>
 #include <stdexcept>
 
 #define SCREEN_WIDTH 960
@@ -71,10 +72,6 @@ void SDL::drawTexture(const Texture &texture, int startX, int startY, float scal
 void SDL::updateLoop(t_map map)
 {
     int scale = 2;
-    Texture empty("assets/roads/empty.ppm");
-    Texture fourDirection("assets/roads/fourDirection.ppm");
-    Texture NorthSouth("assets/roads/NorthSouth.ppm");
-    Texture WestEast("assets/roads/WestEast.ppm");
     while (true)
     {
         checkInput();
@@ -84,28 +81,8 @@ void SDL::updateLoop(t_map map)
 
             for (int x = 0; x < map.width; x++)
             {
-                if (!map.data[y][x].isDefined)
-                {
-                    drawTexture(empty, x * 16 * scale, y * 16 * scale, scale, scale);
-                    continue;
-                }
-                Texture *textureToDraw = NULL;
-                switch (map.data[y][x].possiblesTilesID[0])
-                {
-                case 0:
-                    textureToDraw = &empty;
-                    break;
-                case 1:
-                    textureToDraw = &fourDirection;
-                    break;
-                case 2:
-                    textureToDraw = &NorthSouth;
-                    break;
-                case 3:
-                    textureToDraw = &WestEast;
-                    break;
-                }
-                drawTexture(*textureToDraw, x * 16 * scale, y * 16 * scale, scale, scale);
+                std::shared_ptr<Texture> texture = map.tileset[map.data[y][x].possiblesTilesID[0]].getTexture();
+                drawTexture(*texture, x * 16 * scale, y * 16 * scale, scale, scale);
             }
         SDL_RenderPresent(renderer);
     }

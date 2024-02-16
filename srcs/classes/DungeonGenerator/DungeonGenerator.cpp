@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <map>
 #include <memory>
 #include <vector>
 
@@ -38,19 +39,18 @@ void DungeonGenerator::resetUpdateMap(t_map &map)
 
 t_map DungeonGenerator::generate(int width, int height, const std::string &rulePath)
 {
-    std::vector<Tile> tileset = parseRuleFile(rulePath);
-    t_map map = initMap(width, height, tileset);
+    t_map map = initMap(width, height, rulePath);
     srand(time(NULL));
 
     t_point start = {rand() % width, rand() % height};
 
     defineTile(map, start);
     resetUpdateMap(map);
-    updateNeighbors(map, tileset, start);
+    updateNeighbors(map, start);
     for (int i = 0; i < width * height; i++)
     {
         std::vector<t_point> tilesWithMinPossibility;
-        int minPossibility = tileset.size() + 1;
+        int minPossibility = map.tileset.size() + 1;
         for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
@@ -71,7 +71,7 @@ t_map DungeonGenerator::generate(int width, int height, const std::string &ruleP
         int index = rand() % tilesWithMinPossibility.size();
         defineTile(map, tilesWithMinPossibility[index]);
         resetUpdateMap(map);
-        updateNeighbors(map, tileset, tilesWithMinPossibility[index]);
+        updateNeighbors(map, tilesWithMinPossibility[index]);
     }
     return (map);
 }
@@ -87,7 +87,7 @@ std::vector<Tile> DungeonGenerator::parseRuleFile(const std::string &rulePath)
     for (int i = 0; obj["tiles"][i]; i++)
     {
         Tile newTile(std::make_unique<Texture>(obj["tiles"][i]["path"].asString()));
-        newTile.setID(obj["tiles"][i]["id"].asInt());
+        newTile.setID(i);
         for (auto it = directionsMap.begin(); it != directionsMap.end(); it++)
         {
             for (int j = 0; obj["tiles"][i][it->second][j]; j++)
@@ -98,15 +98,16 @@ std::vector<Tile> DungeonGenerator::parseRuleFile(const std::string &rulePath)
     return (tileset);
 }
 
-t_map DungeonGenerator::initMap(int width, int height, const std::vector<Tile> &tileset)
+t_map DungeonGenerator::initMap(int width, int height, const std::string &rulePath)
 {
     t_map map;
     map.width = width;
     map.height = height;
+    map.tileset = parseRuleFile(rulePath);
     t_possibleTiles initPossiblesTiles;
-    for (unsigned int i = 0; i < tileset.size(); i++)
+    for (unsigned int i = 0; i < map.tileset.size(); i++)
         initPossiblesTiles.possiblesTilesID.push_back((i));
-    initPossiblesTiles.nbPossibleTiles = tileset.size();
+    initPossiblesTiles.nbPossibleTiles = map.tileset.size();
     initPossiblesTiles.isDefined = false;
 
     std::vector<t_possibleTiles> newLine;
@@ -128,7 +129,7 @@ void DungeonGenerator::defineTile(t_map &map, t_point coord)
     chosenTile.isDefined = true;
 }
 
-void DungeonGenerator::updateNeighbors(t_map &map, const std::vector<Tile> &tileset, t_point coord)
+void DungeonGenerator::updateNeighbors(t_map &map, t_point coord)
 {
     for (auto it = modifiersDirection.begin(); it != modifiersDirection.end(); it++)
     {
@@ -137,14 +138,14 @@ void DungeonGenerator::updateNeighbors(t_map &map, const std::vector<Tile> &tile
 
         t_possibleTiles &neighborTile = map.data[coord.y + it->second.y][coord.x + it->second.x];
         neighborTile.hasBeenUpdated = true;
-        std::vector<int> possibleTiles = combineAllPossibleTiles(map, tileset, neighborTile, *it, coord);
+        std::vector<int> possibleTiles = combineAllPossibleTiles(map, neighborTile, coord, it->first);
         if (neighborTile.possiblesTilesID == possibleTiles)
             continue;
         neighborTile.possiblesTilesID = possibleTiles;
         neighborTile.nbPossibleTiles = possibleTiles.size();
         if (neighborTile.nbPossibleTiles == 1)
             neighborTile.isDefined = true;
-        updateNeighbors(map, tileset, {coord.x + it->second.x, coord.y + it->second.y});
+        updateNeighbors(map, {coord.x + it->second.x, coord.y + it->second.y});
     }
 }
 
@@ -161,16 +162,15 @@ bool DungeonGenerator::isNeighborValid(t_map &map, std::pair<int, t_point> dicti
     return (true);
 }
 
-std::vector<int> DungeonGenerator::combineAllPossibleTiles(t_map map, const std::vector<Tile> &tileset,
-                                                           t_possibleTiles &neighborTile,
-                                                           std::pair<int, t_point> dictionnary, t_point coord)
+std::vector<int> DungeonGenerator::combineAllPossibleTiles(t_map map, t_possibleTiles &neighborTile, t_point coord,
+                                                           int direction)
 {
     std::vector<int> possiblesTiles = neighborTile.possiblesTilesID;
     std::vector<int> B;
     for (int i = 0; i < map.data[coord.y][coord.x].nbPossibleTiles; i++)
     {
         std::vector<int> possibleNeighbors =
-            tileset[map.data[coord.y][coord.x].possiblesTilesID[i]].getPossibleNeighbors(dictionnary.first);
+            map.tileset[map.data[coord.y][coord.x].possiblesTilesID[i]].getPossibleNeighbors(direction);
         B.insert(B.end(), possibleNeighbors.begin(), possibleNeighbors.end());
     }
     std::sort(B.begin(), B.end());
