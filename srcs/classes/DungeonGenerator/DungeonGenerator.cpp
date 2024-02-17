@@ -24,6 +24,67 @@ const std::map<int, t_point> modifiersDirection{
     {WEST, {-1, 0}},
 };
 
+typedef enum Members {
+    ROOT,
+    TILES,
+    PATH,
+    NEIGHBORS
+} e_Members;
+
+typedef enum Errors {
+    NO_MEMBER,
+    TOO_MUCH_MEMBERS,
+    WRONG_VALUE,
+} e_Errors;
+
+typedef enum Values {
+    ARRAY,
+    STRING,
+    INT,
+    NONE
+} e_Values;
+
+std::string createErrorMessage(e_Errors error, std::string member, e_Values value = NONE, int tileIndex = -1, int neighborIndex = -1)
+{
+    std::string errorMessage;
+
+    errorMessage += member;
+    if (tileIndex != -1)
+        errorMessage += " at tile index " + std::to_string(tileIndex) + " ";
+    if (neighborIndex != -1)
+        errorMessage += "and at index " + std::to_string(neighborIndex) + " ";
+    switch (error)
+    {
+        case NO_MEMBER:
+            errorMessage += " is missing";
+            break;
+        case TOO_MUCH_MEMBERS:
+            errorMessage += " contains too much members";
+            break;
+        case WRONG_VALUE:
+        {
+            errorMessage += " isn't ";
+            switch (value)
+            {
+                case ARRAY:
+                    errorMessage += " an array or hasn't value in it";
+                    break;
+                case STRING:
+                    errorMessage += " a string";
+                    break;
+                case INT:
+                    errorMessage += " isn't an int or has an incorrect value";
+                    break;
+                default:
+                    break;
+            }
+        }
+        default:
+            break;
+    }
+    return (errorMessage);
+}
+
 bool DungeonGenerator::isRuleFileValid(const std::string &rulePath)
 {
     std::ifstream ifs(rulePath);
@@ -34,41 +95,44 @@ bool DungeonGenerator::isRuleFileValid(const std::string &rulePath)
     try
     {
         if (!obj)
-            throw(std::runtime_error("rule file invalid: can't read " + rulePath));
+            throw(std::runtime_error("impossible to read"));
 
         Json::Value::Members members = obj.getMemberNames();
-        if (members.size() != 1 || !obj.isMember("tiles"))
-            throw(std::runtime_error("rule file invalid: no member \"tiles\" or too much members"));
+        if (obj.size() > 1)
+            throw(std::runtime_error(createErrorMessage(TOO_MUCH_MEMBERS, "root")));
+        if (!obj.isMember("tiles"))
+            throw(std::runtime_error(createErrorMessage(NO_MEMBER, "tiles")));
 
         Json::Value tiles = obj["tiles"];
         if (!tiles.isArray() || tiles.size() < 1)
-            throw(std::runtime_error("rule file invalid: \"tiles\" isn't an array or has no value in it"));
+            throw(std::runtime_error(createErrorMessage(WRONG_VALUE, "tiles", ARRAY)));
         for (unsigned int i = 0; i < tiles.size(); i++)
         {
             Json::Value::Members tile = tiles[i].getMemberNames();
-            if (!tiles[i].isMember("path") || !tiles[i]["path"].isString())
-                throw(std::runtime_error("rule file invalid: \"tiles\" element \"" + std::to_string(i) +
-                                         "\" has no value \"path\" or it value isn't a string"));
+            if (!tiles[i].isMember("path"))
+                throw(std::runtime_error(createErrorMessage(NO_MEMBER, "path", NONE, i)));
+            if (!tiles[i]["path"].isString())
+                throw(std::runtime_error(createErrorMessage(WRONG_VALUE, "path", STRING, i)));
             for (auto it = directionsMap.begin(); it != directionsMap.end(); it++)
             {
-                if (!tiles[i].isMember(it->second) || !tiles[i][it->second].isArray() ||
-                    tiles[i][it->second].size() == 0)
-                    throw(std::runtime_error("rule file invalid: \"tiles\" element \"" + std::to_string(i) +
-                                             "\" has no value \"" + it->second +
-                                             "\", it value isn't an array or it has no element in it"));
+                if (!tiles[i].isMember(it->second))
+                    throw(std::runtime_error(createErrorMessage(NO_MEMBER, it->second, NONE, i)));
+                if (!tiles[i][it->second].isArray())
+                    throw(std::runtime_error(createErrorMessage(WRONG_VALUE, it->second, ARRAY, i)));
+
                 for (unsigned int j = 0; j < tiles[i][it->second].size(); j++)
                 {
                     if (!tiles[i][it->second][j].isInt() || tiles[i][it->second][j] < 0 ||
                         tiles[i][it->second][j] >= tiles.size())
-                        throw(std::runtime_error("rule file invalid: \"tiles\" element [" + std::to_string(i) + "][" +
-                                                 std::to_string(j) + "] isn't an int or is an incorrect value"));
+                        throw(std::runtime_error(createErrorMessage(WRONG_VALUE, it->second, INT, i, j)));
+
                 }
             }
         }
     }
     catch (const std::exception &exception)
     {
-        std::cout << exception.what() << std::endl;
+        std::cerr << "Error while reading " << rulePath << ": " << exception.what() << std::endl;
         return (false);
     }
     return (true);
