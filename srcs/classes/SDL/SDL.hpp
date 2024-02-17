@@ -7,13 +7,7 @@
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_surface.h>
 #include <string>
-
-typedef struct s_data
-{
-    std::string rulepath;
-    int scale;
-    t_map map;
-} t_data;
+#include "../../structs/t_data.hpp"
 
 class SDL
 {

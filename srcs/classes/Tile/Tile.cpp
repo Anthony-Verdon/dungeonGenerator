@@ -2,13 +2,7 @@
 #include <iostream>
 #include <map>
 #include <memory>
-const std::map<int, std::string> directionsMap{
-    {NORTH, "possibilityNorth"},
-    {SOUTH, "possibilitySouth"},
-    {EAST, "possibilityEast"},
-    {WEST, "possibilityWest"},
-};
-
+#include "../../globals.hpp"
 Tile::Tile(const std::shared_ptr<Texture> &newTexture)
 {
     texture = newTexture;
@@ -70,7 +64,7 @@ std::ostream &operator<<(std::ostream &os, const Tile &instance)
     os << "Tile ID:" << instance.getID() << std::endl;
     for (int i = 0; i < 4; i++)
     {
-        os << directionsMap.at(i) << ": ";
+        os << directionsPossibilityArray[i] << ": ";
         std::vector<int> possibleNeighbors = instance.getPossibleNeighbors(i);
         for (auto it = possibleNeighbors.begin(); it != possibleNeighbors.end(); it++)
             os << *it << " ";

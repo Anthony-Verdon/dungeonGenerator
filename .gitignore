@@ -1,3 +1,4 @@
 dungeonGenerator
 lastMapGenerated.txt
 *.o
+.vscode

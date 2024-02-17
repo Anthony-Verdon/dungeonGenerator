@@ -2,13 +2,6 @@
 
 #include "../Texture/Texture.hpp"
 #include <memory>
-enum e_Direction
-{
-    NORTH,
-    SOUTH,
-    EAST,
-    WEST
-};
 
 class Tile
 {

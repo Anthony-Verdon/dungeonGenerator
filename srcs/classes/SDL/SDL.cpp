@@ -1,5 +1,7 @@
 #include "SDL.hpp"
 #include "../Texture/Texture.hpp"
+#include "../ruleFileParser/ruleFileParser.hpp"
+#include "../fileGenerator/fileGenerator.hpp"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_keyboard.h>
@@ -8,9 +10,8 @@
 #include <SDL2/SDL_surface.h>
 #include <iostream>
 #include <stdexcept>
+#include "../../define.hpp"
 
-#define SCREEN_WIDTH 960
-#define SCREEN_HEIGHT 720
 SDL::SDL()
 {
     window = NULL;
@@ -89,6 +90,7 @@ void SDL::drawTexture(const Texture &texture, int startX, int startY, float scal
 void SDL::start()
 {
     data.scale = 1;
+    data.rulepath = "assets/roads/rules.json";
     data.map = DungeonGenerator::generateMap(20, 20, "assets/roads/rules.json");
 }
 
@@ -151,7 +153,7 @@ void SDL::askRulePath()
     std::string entry;
     std::cout << "enter rule path" << std::endl;
     getline(std::cin, entry);
-    if (DungeonGenerator::isRuleFileValid(entry))
+    if (ruleFileParser::isRuleFileValid(entry))
     {
         std::cout << "rule path saved" << std::endl;
         data.rulepath = entry;
@@ -169,7 +171,7 @@ void SDL::parseKeyDown(int keydown)
         data.map = DungeonGenerator::generateMap(20, 20, data.rulepath);
         break;
     case SDLK_f:
-        DungeonGenerator::generateFile(data.map);
+        fileGenerator::generateFile(data.map);
     case SDLK_r:
         askRulePath();
     default:

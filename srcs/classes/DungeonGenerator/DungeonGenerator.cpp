@@ -1,142 +1,14 @@
 #include "DungeonGenerator.hpp"
-#include "../../../libs/jsoncpp_x64-linux/include/json/json.h"
+#include "../ruleFileParser/ruleFileParser.hpp"
 #include <algorithm>
 #include <cstdlib>
-#include <fstream>
 #include <iostream>
 #include <map>
 #include <memory>
 #include <stdexcept>
 #include <string>
 #include <vector>
-
-std::map<int, std::string> directionsMap{
-    {NORTH, "possibilityNorth"},
-    {SOUTH, "possibilitySouth"},
-    {EAST, "possibilityEast"},
-    {WEST, "possibilityWest"},
-};
-
-const std::map<int, t_point> modifiersDirection{
-    {NORTH, {0, -1}},
-    {SOUTH, {0, +1}},
-    {EAST, {+1, 0}},
-    {WEST, {-1, 0}},
-};
-
-typedef enum Members {
-    ROOT,
-    TILES,
-    PATH,
-    NEIGHBORS
-} e_Members;
-
-typedef enum Errors {
-    NO_MEMBER,
-    TOO_MUCH_MEMBERS,
-    WRONG_VALUE,
-} e_Errors;
-
-typedef enum Values {
-    ARRAY,
-    STRING,
-    INT,
-    NONE
-} e_Values;
-
-std::string createErrorMessage(e_Errors error, std::string member, e_Values value = NONE, int tileIndex = -1, int neighborIndex = -1)
-{
-    std::string errorMessage;
-
-    errorMessage += member;
-    if (tileIndex != -1)
-        errorMessage += " at tile index " + std::to_string(tileIndex) + " ";
-    if (neighborIndex != -1)
-        errorMessage += "and at index " + std::to_string(neighborIndex) + " ";
-    switch (error)
-    {
-        case NO_MEMBER:
-            errorMessage += " is missing";
-            break;
-        case TOO_MUCH_MEMBERS:
-            errorMessage += " contains too much members";
-            break;
-        case WRONG_VALUE:
-        {
-            errorMessage += " isn't ";
-            switch (value)
-            {
-                case ARRAY:
-                    errorMessage += " an array or hasn't value in it";
-                    break;
-                case STRING:
-                    errorMessage += " a string";
-                    break;
-                case INT:
-                    errorMessage += " isn't an int or has an incorrect value";
-                    break;
-                default:
-                    break;
-            }
-        }
-        default:
-            break;
-    }
-    return (errorMessage);
-}
-
-bool DungeonGenerator::isRuleFileValid(const std::string &rulePath)
-{
-    std::ifstream ifs(rulePath);
-    Json::Reader reader;
-    Json::Value obj;
-    reader.parse(ifs, obj);
-
-    try
-    {
-        if (!obj)
-            throw(std::runtime_error("impossible to read"));
-
-        Json::Value::Members members = obj.getMemberNames();
-        if (obj.size() > 1)
-            throw(std::runtime_error(createErrorMessage(TOO_MUCH_MEMBERS, "root")));
-        if (!obj.isMember("tiles"))
-            throw(std::runtime_error(createErrorMessage(NO_MEMBER, "tiles")));
-
-        Json::Value tiles = obj["tiles"];
-        if (!tiles.isArray() || tiles.size() < 1)
-            throw(std::runtime_error(createErrorMessage(WRONG_VALUE, "tiles", ARRAY)));
-        for (unsigned int i = 0; i < tiles.size(); i++)
-        {
-            Json::Value::Members tile = tiles[i].getMemberNames();
-            if (!tiles[i].isMember("path"))
-                throw(std::runtime_error(createErrorMessage(NO_MEMBER, "path", NONE, i)));
-            if (!tiles[i]["path"].isString())
-                throw(std::runtime_error(createErrorMessage(WRONG_VALUE, "path", STRING, i)));
-            for (auto it = directionsMap.begin(); it != directionsMap.end(); it++)
-            {
-                if (!tiles[i].isMember(it->second))
-                    throw(std::runtime_error(createErrorMessage(NO_MEMBER, it->second, NONE, i)));
-                if (!tiles[i][it->second].isArray())
-                    throw(std::runtime_error(createErrorMessage(WRONG_VALUE, it->second, ARRAY, i)));
-
-                for (unsigned int j = 0; j < tiles[i][it->second].size(); j++)
-                {
-                    if (!tiles[i][it->second][j].isInt() || tiles[i][it->second][j] < 0 ||
-                        tiles[i][it->second][j] >= tiles.size())
-                        throw(std::runtime_error(createErrorMessage(WRONG_VALUE, it->second, INT, i, j)));
-
-                }
-            }
-        }
-    }
-    catch (const std::exception &exception)
-    {
-        std::cerr << "Error while reading " << rulePath << ": " << exception.what() << std::endl;
-        return (false);
-    }
-    return (true);
-}
+#include "../../globals.hpp"
 
 void DungeonGenerator::resetUpdateMap(t_map &map)
 {
@@ -186,35 +58,13 @@ t_map DungeonGenerator::generateMap(int width, int height, const std::string &ru
     return (map);
 }
 
-std::vector<Tile> DungeonGenerator::parseRuleFile(const std::string &rulePath)
-{
-    std::ifstream ifs(rulePath);
-    Json::Reader reader;
-    Json::Value obj;
-    reader.parse(ifs, obj);
-    std::vector<Tile> tileset;
-
-    for (int i = 0; obj["tiles"][i]; i++)
-    {
-        Tile newTile(std::make_unique<Texture>(obj["tiles"][i]["path"].asString()));
-        newTile.setID(i);
-        for (auto it = directionsMap.begin(); it != directionsMap.end(); it++)
-        {
-            for (int j = 0; obj["tiles"][i][it->second][j]; j++)
-                newTile.addPossibleNeighbors(it->first, obj["tiles"][i][it->second][j].asInt());
-        }
-        tileset.push_back(newTile);
-    }
-    return (tileset);
-}
-
 t_map DungeonGenerator::initMap(int width, int height, const std::string &rulePath)
 {
     t_map map;
     map.width = width;
     map.height = height;
     map.rulePath = rulePath;
-    map.tileset = parseRuleFile(rulePath);
+    map.tileset = ruleFileParser::parseRuleFile(rulePath);
     t_possibleTiles initPossiblesTiles;
     for (unsigned int i = 0; i < map.tileset.size(); i++)
         initPossiblesTiles.possiblesTilesID.push_back((i));
@@ -242,32 +92,32 @@ void DungeonGenerator::defineTile(t_map &map, t_point coord)
 
 void DungeonGenerator::updateNeighbors(t_map &map, t_point coord)
 {
-    for (auto it = modifiersDirection.begin(); it != modifiersDirection.end(); it++)
+    for (int i = 0; i < 4; i++)
     {
-        if (!isNeighborValid(map, *it, coord))
+        if (!isNeighborValid(map, directionModifiersArray[i], coord))
             continue;
 
-        t_possibleTiles &neighborTile = map.data[coord.y + it->second.y][coord.x + it->second.x];
+        t_possibleTiles &neighborTile = map.data[coord.y + directionModifiersArray[i].y][coord.x + directionModifiersArray[i].x];
         neighborTile.hasBeenUpdated = true;
-        std::vector<int> possibleTiles = combineAllPossibleTiles(map, neighborTile, coord, it->first);
+        std::vector<int> possibleTiles = combineAllPossibleTiles(map, neighborTile, coord, i);
         if (neighborTile.possiblesTilesID == possibleTiles)
             continue;
         neighborTile.possiblesTilesID = possibleTiles;
         neighborTile.nbPossibleTiles = possibleTiles.size();
         if (neighborTile.nbPossibleTiles == 1)
             neighborTile.isDefined = true;
-        updateNeighbors(map, {coord.x + it->second.x, coord.y + it->second.y});
+        updateNeighbors(map, {coord.x + directionModifiersArray[i].x, coord.y + directionModifiersArray[i].y});
     }
 }
 
-bool DungeonGenerator::isNeighborValid(t_map &map, std::pair<int, t_point> dictionnary, t_point coord)
+bool DungeonGenerator::isNeighborValid(t_map &map, t_point modifier, t_point coord)
 {
-    if (coord.x + dictionnary.second.x < 0 || coord.x + dictionnary.second.x >= map.width)
+    if (coord.x + modifier.x < 0 || coord.x + modifier.x >= map.width)
         return (false);
-    if (coord.y + dictionnary.second.y < 0 || coord.y + dictionnary.second.y >= map.height)
+    if (coord.y + modifier.y < 0 || coord.y + modifier.y >= map.height)
         return (false);
-    if (map.data[coord.y + dictionnary.second.y][coord.x + dictionnary.second.x].isDefined ||
-        map.data[coord.y + dictionnary.second.y][coord.x + dictionnary.second.x].hasBeenUpdated)
+    if (map.data[coord.y + modifier.y][coord.x + modifier.x].isDefined ||
+        map.data[coord.y + modifier.y][coord.x + modifier.x].hasBeenUpdated)
         return (false);
 
     return (true);
@@ -290,20 +140,6 @@ std::vector<int> DungeonGenerator::combineAllPossibleTiles(t_map map, t_possible
                                         [&B](int x) { return std::find(B.begin(), B.end(), x) == B.end(); }),
                          possiblesTiles.end());
     return (possiblesTiles);
-}
-
-void DungeonGenerator::generateFile(t_map map)
-{
-    std::ofstream fileGenerated("lastMapGenerated.txt");
-    fileGenerated << map.width << " " << map.height << std::endl;
-    fileGenerated << map.rulePath << std::endl;
-    for (int y = 0; y < map.height; y++)
-    {
-        for (int x = 0; x < map.width; x++)
-            fileGenerated << map.data[y][x].possiblesTilesID[0] << " ";
-        fileGenerated << std::endl;
-    }
-    fileGenerated.close();
 }
 
 std::ostream &operator<<(std::ostream &os, const t_map &instance)
