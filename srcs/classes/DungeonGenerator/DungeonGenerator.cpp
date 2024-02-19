@@ -1,14 +1,11 @@
 #include "DungeonGenerator.hpp"
+#include "../../globals.hpp"
 #include "../ruleFileParser/ruleFileParser.hpp"
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
-#include <map>
-#include <memory>
-#include <stdexcept>
 #include <string>
 #include <vector>
-#include "../../globals.hpp"
 
 void DungeonGenerator::resetUpdateMap(t_map &map)
 {
@@ -97,7 +94,8 @@ void DungeonGenerator::updateNeighbors(t_map &map, t_point coord)
         if (!isNeighborValid(map, directionModifiersArray[i], coord))
             continue;
 
-        t_possibleTiles &neighborTile = map.data[coord.y + directionModifiersArray[i].y][coord.x + directionModifiersArray[i].x];
+        t_possibleTiles &neighborTile =
+            map.data[coord.y + directionModifiersArray[i].y][coord.x + directionModifiersArray[i].x];
         neighborTile.hasBeenUpdated = true;
         std::vector<int> possibleTiles = combineAllPossibleTiles(map, neighborTile, coord, i);
         if (neighborTile.possiblesTilesID == possibleTiles)

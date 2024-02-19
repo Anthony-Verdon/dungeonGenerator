@@ -1,9 +1,9 @@
 #include "ruleFileParser.hpp"
-#include <string>
 #include "../../../libs/jsoncpp_x64-linux/include/json/json.h"
+#include "../../globals.hpp"
 #include <fstream>
 #include <iostream>
-#include "../../globals.hpp"
+#include <string>
 
 std::vector<Tile> ruleFileParser::parseRuleFile(const std::string &rulePath)
 {
@@ -55,6 +55,7 @@ bool ruleFileParser::isRuleFileValid(const std::string &rulePath)
                 throw(std::runtime_error(createErrorMessage(NO_MEMBER, "path", NONE, i)));
             if (!tiles[i]["path"].isString())
                 throw(std::runtime_error(createErrorMessage(WRONG_VALUE, "path", STRING, i)));
+            Texture tryTexture(tiles[i]["path"].asString());
             for (int j = 0; j < 4; j++)
             {
                 if (!tiles[i].isMember(directionsPossibilityArray[j]))
@@ -64,10 +65,11 @@ bool ruleFileParser::isRuleFileValid(const std::string &rulePath)
 
                 for (int k = 0; obj["tiles"][i][directionsPossibilityArray[j]][k]; k++)
                 {
-                    if (!tiles[i][directionsPossibilityArray[j]][k].isInt() || tiles[i][directionsPossibilityArray[j]][k] < 0 ||
+                    if (!tiles[i][directionsPossibilityArray[j]][k].isInt() ||
+                        tiles[i][directionsPossibilityArray[j]][k] < 0 ||
                         tiles[i][directionsPossibilityArray[j]][k] >= tiles.size())
-                        throw(std::runtime_error(createErrorMessage(WRONG_VALUE, directionsPossibilityArray[j], INT, i, k)));
-
+                        throw(std::runtime_error(
+                            createErrorMessage(WRONG_VALUE, directionsPossibilityArray[j], INT, i, k)));
                 }
             }
         }
@@ -80,7 +82,8 @@ bool ruleFileParser::isRuleFileValid(const std::string &rulePath)
     return (true);
 }
 
-std::string ruleFileParser::createErrorMessage(e_errors error, std::string member, e_values value, int tileIndex, int neighborIndex)
+std::string ruleFileParser::createErrorMessage(e_errors error, std::string member, e_values value, int tileIndex,
+                                               int neighborIndex)
 {
     std::string errorMessage;
 
@@ -91,32 +94,31 @@ std::string ruleFileParser::createErrorMessage(e_errors error, std::string membe
         errorMessage += "and at index " + std::to_string(neighborIndex) + " ";
     switch (error)
     {
-        case NO_MEMBER:
-            errorMessage += " is missing";
-            break;
-        case TOO_MUCH_MEMBERS:
-            errorMessage += " contains too much members";
-            break;
-        case WRONG_VALUE:
+    case NO_MEMBER:
+        errorMessage += " is missing";
+        break;
+    case TOO_MUCH_MEMBERS:
+        errorMessage += " contains too much members";
+        break;
+    case WRONG_VALUE: {
+        errorMessage += " isn't ";
+        switch (value)
         {
-            errorMessage += " isn't ";
-            switch (value)
-            {
-                case ARRAY:
-                    errorMessage += " an array or hasn't value in it";
-                    break;
-                case STRING:
-                    errorMessage += " a string";
-                    break;
-                case INT:
-                    errorMessage += " isn't an int or has an incorrect value";
-                    break;
-                default:
-                    break;
-            }
-        }
+        case ARRAY:
+            errorMessage += " an array or hasn't value in it";
+            break;
+        case STRING:
+            errorMessage += " a string";
+            break;
+        case INT:
+            errorMessage += " isn't an int or has an incorrect value";
+            break;
         default:
             break;
+        }
+    }
+    default:
+        break;
     }
     return (errorMessage);
 }
