@@ -1,7 +1,8 @@
 #include "SDL.hpp"
+#include "../../define.hpp"
 #include "../Texture/Texture.hpp"
-#include "../ruleFileParser/ruleFileParser.hpp"
 #include "../fileGenerator/fileGenerator.hpp"
+#include "../ruleFileParser/ruleFileParser.hpp"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_keyboard.h>
@@ -10,7 +11,6 @@
 #include <SDL2/SDL_surface.h>
 #include <iostream>
 #include <stdexcept>
-#include "../../define.hpp"
 
 SDL::SDL()
 {
@@ -170,10 +170,15 @@ void SDL::parseKeyDown(int keydown)
     case SDLK_g:
         data.map = DungeonGenerator::generateMap(20, 20, data.rulepath);
         break;
+    case SDLK_z:
+        data.map = DungeonGenerator::generateMap("initMap.txt");
+        break;
     case SDLK_f:
         fileGenerator::generateFile(data.map);
+        break;
     case SDLK_r:
         askRulePath();
+        break;
     default:
         break;
     }

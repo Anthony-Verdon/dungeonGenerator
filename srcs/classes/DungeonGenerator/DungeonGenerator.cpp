@@ -1,5 +1,6 @@
 #include "DungeonGenerator.hpp"
 #include "../../globals.hpp"
+#include "../fileGenerator/fileGenerator.hpp"
 #include "../ruleFileParser/ruleFileParser.hpp"
 #include <algorithm>
 #include <cstdlib>
@@ -19,20 +20,53 @@ void DungeonGenerator::resetUpdateMap(t_map &map)
 t_map DungeonGenerator::generateMap(int width, int height, const std::string &rulePath)
 {
     t_map map = initMap(width, height, rulePath);
+
     srand(time(NULL));
-
     t_point start = {rand() % width, rand() % height};
-
     defineTile(map, start);
     resetUpdateMap(map);
     updateNeighbors(map, start);
-    for (int i = 0; i < width * height; i++)
+
+    generationLoop(map);
+    return (map);
+}
+
+t_map DungeonGenerator::generateMap(const std::string &mapPath)
+{
+    /*
+    need to create something to check if the file is ok
+    -> good values
+    -> be sure that every defined tile can be next to each other
+
+    maybe create another class for this,
+    or update ruleFileParser into fileParser with 2 differents sections
+    */
+    t_map map = fileGenerator::parseFile(mapPath);
+    srand(time(NULL));
+    for (int y = 0; y < map.height; y++)
+    {
+        for (int x = 0; x < map.width; x++)
+        {
+            if (map.data[y][x].isDefined)
+            {
+                resetUpdateMap(map);
+                updateNeighbors(map, {x, y});
+            }
+        }
+    }
+    generationLoop(map);
+    return (map);
+}
+
+void DungeonGenerator::generationLoop(t_map &map)
+{
+    for (int i = 0; i < map.width * map.height; i++)
     {
         std::vector<t_point> tilesWithMinPossibility;
         int minPossibility = map.tileset.size() + 1;
-        for (int y = 0; y < height; y++)
+        for (int y = 0; y < map.height; y++)
         {
-            for (int x = 0; x < width; x++)
+            for (int x = 0; x < map.width; x++)
             {
                 if (map.data[y][x].isDefined)
                     continue;
@@ -52,7 +86,6 @@ t_map DungeonGenerator::generateMap(int width, int height, const std::string &ru
         resetUpdateMap(map);
         updateNeighbors(map, tilesWithMinPossibility[index]);
     }
-    return (map);
 }
 
 t_map DungeonGenerator::initMap(int width, int height, const std::string &rulePath)
