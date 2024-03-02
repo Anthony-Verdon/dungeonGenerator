@@ -4,14 +4,43 @@
 #include <iostream>
 #include <gtkmm.h>
 
+bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
+    const int width = 160;
+    const int height = 160;
+
+    cr->set_source_rgb(1.0, 1.0, 1.0); // White background
+    cr->paint();
+
+    const int squareSize = 20; // Size of each square
+    const int numRows = 8;
+    const int numCols = 8;
+
+    // Draw chessboard
+    for (int row = 0; row < numRows; ++row) {
+        for (int col = 0; col < numCols; ++col) {
+            int x = col * squareSize;
+            int y = row * squareSize;
+
+            // Alternate between black and white squares
+            if ((row + col) % 2 == 0) {
+                cr->set_source_rgb(0.0, 0.0, 0.0); // Black
+            } else {
+                cr->set_source_rgb(1.0, 1.0, 1.0); // White
+            }
+
+            cr->rectangle(x, y, squareSize, squareSize);
+            cr->fill();
+        }
+    }
+
+    return true;
+}
 struct window
 {
     Gtk::Window *window = NULL;
     Gtk::Button *generateMap = NULL;
     Gtk::FileChooserButton *chooseRulePath = NULL;
     Gtk::FileChooserButton *saveMap = NULL;
-    Gtk::Image *image = NULL;
-    Glib::RefPtr<Gdk::Pixbuf> m_image;
 };
 
 void buttonClicked()
@@ -46,18 +75,22 @@ int main(int argc, char *argv[])
     auto app = Gtk::Application::create("org.gtkmm.example");
     auto builder = Gtk::Builder::create_from_file("../blueprint.glade");
 
-    struct window window;
-    builder->get_widget("mainWindow", window.window);
-    builder->get_widget("generateMap", window.generateMap);
-    window.generateMap->signal_clicked().connect(&generateMap);
-    builder->get_widget("chooseRuleFile", window.chooseRulePath);
-    window.chooseRulePath->signal_file_set().connect(&chooseRuleFile);
-    builder->get_widget("saveMap", window.saveMap);
-    window.saveMap->signal_file_set().connect(&saveMap);
+    struct window instance;
+    builder->get_widget("mainWindow", instance.window);
+    builder->get_widget("generateMap", instance.generateMap);
+    instance.generateMap->signal_clicked().connect(&generateMap);
+    builder->get_widget("chooseRuleFile", instance.chooseRulePath);
+    instance.chooseRulePath->signal_file_set().connect(&chooseRuleFile);
+    builder->get_widget("saveMap", instance.saveMap);
+    instance.saveMap->signal_file_set().connect(&saveMap);
+    
+    Gtk::DrawingArea *drawing_area;
+    builder->get_widget("drawingArea", drawing_area);
+    drawing_area->set_size_request(160, 160);
+    drawing_area->signal_draw().connect(&on_draw);
+    drawing_area->show();
 
-    builder->get_widget("map", window.image);
-    window.image->set("../dungeonGenerator/picture.ppm");
-    Gtk::Main::run(*(window.window));
+    Gtk::Main::run(*(instance.window));
     return (EXIT_SUCCESS);
     }
     catch (const std::exception &exception)
