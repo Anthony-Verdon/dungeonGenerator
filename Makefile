@@ -15,9 +15,8 @@ COMPILER := clang++
 
 RM		:= rm -f
 
-CFLAGS 	:= -Wall -Werror -Wextra -g
-
-LIBRARIES := -lSDL2 -Llibs/jsoncpp_x64-linux/lib -ljsoncpp -Llibs/SDL2_ttf/build -lSDL2_ttf-2.0
+CFLAGS 	:= -Wall -Wextra -g $(shell pkg-config gtkmm-3.0 --cflags)
+LIBRARIES := -lSDL2 -Llibs/jsoncpp_x64-linux/lib -ljsoncpp -Llibs/SDL2_ttf/build -lSDL2_ttf-2.0 $(shell pkg-config gtkmm-3.0 --libs)
 
 .cpp.o:
 			${COMPILER} ${CFLAGS} -c $< -o ${<:.cpp=.o}
@@ -28,10 +27,10 @@ ${NAME}:	${OBJS}
 			${COMPILER} ${OBJS} -o ${NAME} ${LIBRARIES}
 
 clean:
-			${RM} ${OBJS} ${OBJS} 
+			${RM} ${OBJS}
 
 fclean: 	clean
-			${RM} ${NAME} ${NAME}
+			${RM} ${NAME}
 
 re:
 			make fclean
