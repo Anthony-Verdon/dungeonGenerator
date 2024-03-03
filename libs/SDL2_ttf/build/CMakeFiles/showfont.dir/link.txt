@@ -1,1 +1,0 @@
-/usr/bin/cc CMakeFiles/showfont.dir/showfont.c.o -o showfont  -Wl,-rpath,/nfs/homes/nlocusso/spe_project/doom-nukem/libs/SDL2_ttf/build libSDL2_ttf-2.0.so.0.2000.2 /usr/lib/x86_64-linux-gnu/libSDL2main.a /usr/lib/x86_64-linux-gnu/libSDL2.so 

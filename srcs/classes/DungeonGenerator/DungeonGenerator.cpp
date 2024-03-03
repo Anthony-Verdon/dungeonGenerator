@@ -19,7 +19,6 @@ void DungeonGenerator::resetUpdateMap(t_map &map)
 
 t_map DungeonGenerator::generateMap(int width, int height, const std::string &rulePath)
 {
-    std::cout << "map generated" << std::endl;
     t_map map = initMap(width, height, rulePath);
 
     srand(time(NULL));
