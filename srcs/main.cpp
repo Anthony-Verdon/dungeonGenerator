@@ -33,8 +33,8 @@ int main(int argc, char *argv[])
 
 
         data.window.generateMap->signal_clicked().connect(sigc::bind<t_data*>(&generateMap, &data));
-        data.window.chooseRulePath->signal_file_set().connect(sigc::bind<t_data*>(&chooseRuleFile, &data));
-        data.window.saveMap->signal_file_set().connect(sigc::bind<t_data*>(&saveMap, &data));
+        data.window.chooseRulePath->signal_clicked().connect(sigc::bind<t_data*>(&chooseRuleFile, &data));
+        data.window.saveMap->signal_clicked().connect(sigc::bind<t_data*>(&saveMap, &data));
         data.window.drawingArea->signal_draw().connect(sigc::bind<t_data*>(&drawMap, &data));
         Gtk::Main::run(*(data.window.window));
         return (EXIT_SUCCESS);

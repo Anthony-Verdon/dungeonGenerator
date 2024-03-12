@@ -2,24 +2,48 @@
 #include "structs/t_data.hpp"
 #include "classes/Texture/Texture.hpp"
 #include "classes/DungeonGenerator/DungeonGenerator.hpp"
+#include "classes/ruleFileParser/ruleFileParser.hpp"
+#include <iostream>
 
 void generateMap(t_data *data)
 {
-    data->map = DungeonGenerator::generateMap(20, 20, data->rulepath);
-    data->window.drawingArea->queue_draw();
-
+    if (data->rulepath.empty())
+    {
+        std::cout << "no rule file selected" << std::endl;
+        return;
+    }
+    if (ruleFileParser::isRuleFileValid(data->rulepath))
+    {
+        data->map = DungeonGenerator::generateMap(20, 20, data->rulepath);
+        data->window.drawingArea->queue_draw();
+    }
 }
 
 void chooseRuleFile(t_data *data)
 {
-    std::string filename = data->window.chooseRulePath->get_filename();
+    Gtk::FileChooserDialog window("Please choose a file", Gtk::FILE_CHOOSER_ACTION_OPEN);
+    
+    window.set_modal(true);
+    window.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
+    window.add_button("_Open", Gtk::RESPONSE_OK);
+    window.run();
+    
+    std::string filename = window.get_filename();
     if (!filename.empty())
         data->rulepath = filename;
+    
 }
 
-void saveMap(t_data *data)
-{
-    (void)data;
+void saveMap(t_data *data){
+    Gtk::FileChooserDialog window("Please choose a folder", Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER);
+    
+    window.set_modal(true);
+    window.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
+    window.add_button("_Open", Gtk::RESPONSE_OK);
+    window.run();
+    
+    std::string filename = window.get_filename();
+    std::cout << filename << std::endl;
 }
 
 static void drawPixel(const Cairo::RefPtr<Cairo::Context>& cr, int x, int y, float color[3])
@@ -59,6 +83,5 @@ bool drawMap(const Cairo::RefPtr<Cairo::Context>& cr, t_data *data) {
                 drawTexture(cr, *texture, x * 16, y * 16, 1.0, 1.0);
             }
         }
-
     return true;
 }
