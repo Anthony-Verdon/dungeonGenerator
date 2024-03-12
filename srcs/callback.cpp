@@ -3,13 +3,14 @@
 #include "classes/Texture/Texture.hpp"
 #include "classes/DungeonGenerator/DungeonGenerator.hpp"
 #include "classes/ruleFileParser/ruleFileParser.hpp"
+#include "classes/fileGenerator/fileGenerator.hpp"
 #include <iostream>
 
 void generateMap(t_data *data)
 {
     if (data->rulepath.empty())
     {
-        std::cout << "no rule file selected" << std::endl;
+        std::cerr << "no rule file selected" << std::endl;
         return;
     }
     if (ruleFileParser::isRuleFileValid(data->rulepath))
@@ -43,7 +44,8 @@ void saveMap(t_data *data){
     window.run();
     
     std::string filename = window.get_filename();
-    std::cout << filename << std::endl;
+    if (!filename.empty())
+        fileGenerator::generateFile(data->map, filename);
 }
 
 static void drawPixel(const Cairo::RefPtr<Cairo::Context>& cr, int x, int y, float color[3])

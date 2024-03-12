@@ -6,6 +6,6 @@
 class fileGenerator
 {
   public:
-    static void generateFile(t_map map);
+    static void generateFile(const t_map &map, const std::string &folderPath);
     static t_map parseFile(const std::string &mapPath);
 };

@@ -5,9 +5,9 @@
 #include <fstream>
 #include <string>
 
-void fileGenerator::generateFile(t_map map)
+void fileGenerator::generateFile(const t_map &map, const std::string &folderPath)
 {
-    std::ofstream fileGenerated("lastMapGenerated.txt");
+    std::ofstream fileGenerated(folderPath + "/lastMapGenerated.txt");
     fileGenerated << map.width << " " << map.height << std::endl;
     fileGenerated << map.rulePath << std::endl;
     for (int y = 0; y < map.height; y++)
