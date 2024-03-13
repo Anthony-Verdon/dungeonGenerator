@@ -9,8 +9,9 @@ Implementation of  Wave Function Collapse Algorithm (generation of a 2D map with
 - choose the rule file
 - render map
 - save map
+- choose map size
+- move on a map bigger than 20x20
 
 ## possibilities to add
-- choose map size (20x20 by default)
-- move on a map bigger than 20x20
+- give a map in entrance
 - make the UI prettier

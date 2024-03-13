@@ -5,11 +5,12 @@
 #include "structs/t_gtkWindow.hpp"
 #include "classes/DungeonGenerator/DungeonGenerator.hpp"
 #include <gtkmm.h>
-
+#include <gtkmm/eventcontroller.h>
 void generateMap(t_data *data);
 void chooseRuleFile(t_data *data);
 void saveMap(t_data *data);
 bool drawMap(const Cairo::RefPtr<Cairo::Context>& cr, t_data *data);
+bool onKeyPressed(GdkEventKey *event, t_data *data);
 
 int main(int argc, char *argv[])
 {
@@ -25,17 +26,20 @@ int main(int argc, char *argv[])
         t_data data;
         builder->get_widget("mainWindow", data.window.window);
         builder->get_widget("generateMap", data.window.generateMap);
+        builder->get_widget("width", data.window.width);
+        builder->get_widget("height", data.window.height); 
         builder->get_widget("chooseRuleFile", data.window.chooseRulePath);
         builder->get_widget("saveMap", data.window.saveMap);
         builder->get_widget("drawingArea", data.window.drawingArea);
         data.window.drawingArea->set_size_request(320, 320);
         data.window.drawingArea->show();
 
-
         data.window.generateMap->signal_clicked().connect(sigc::bind<t_data*>(&generateMap, &data));
         data.window.chooseRulePath->signal_clicked().connect(sigc::bind<t_data*>(&chooseRuleFile, &data));
         data.window.saveMap->signal_clicked().connect(sigc::bind<t_data*>(&saveMap, &data));
         data.window.drawingArea->signal_draw().connect(sigc::bind<t_data*>(&drawMap, &data));
+        data.window.window->add_events(Gdk::KEY_PRESS_MASK);
+        data.window.window->signal_key_press_event().connect(sigc::bind<t_data*>(&onKeyPressed, &data));
         Gtk::Main::run(*(data.window.window));
         return (EXIT_SUCCESS);
     }

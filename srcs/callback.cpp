@@ -13,9 +13,26 @@ void generateMap(t_data *data)
         std::cerr << "no rule file selected" << std::endl;
         return;
     }
+
+    char *end;
+    std::string widthEntry = data->window.width->get_buffer()->get_text();
+    int width = std::strtol(widthEntry.c_str(), &end, 10);
+    if (widthEntry.size() == 0 || end[0] != '\0')
+    {
+        std::cerr << "invalid width" << std::endl;
+        return;
+    }
+    std::string heightEntry = data->window.height->get_buffer()->get_text();
+    int height = std::strtol(heightEntry.c_str(), &end, 10);
+    if (heightEntry.size() == 0 || end[0] != '\0')
+    {
+        std::cerr << "invalid height" << std::endl;
+        return;
+    }
+
     if (ruleFileParser::isRuleFileValid(data->rulepath))
     {
-        data->map = DungeonGenerator::generateMap(20, 20, data->rulepath);
+        data->map = DungeonGenerator::generateMap(width, height, data->rulepath);
         data->window.drawingArea->queue_draw();
     }
 }
@@ -76,14 +93,53 @@ static void drawTexture(const Cairo::RefPtr<Cairo::Context>& cr, const Texture &
 }
 
 bool drawMap(const Cairo::RefPtr<Cairo::Context>& cr, t_data *data) {
-    for (int y = 0; y < data->map.height; y++)
+
+    int width = 20;
+    if (data->map.width < 20)
+        width = data->map.width;
+    int height = 20;
+    if (data->map.height < 20)
+        height = data->map.height;
+    for (int y = 0; y < height; y++)
         {
-            for (int x = 0; x < data->map.width; x++)
+            for (int x = 0; x < width; x++)
             {
                 std::shared_ptr<Texture> texture =
-                    data->map.tileset[data->map.data[y][x].possiblesTilesID[0]].getTexture();
+                    data->map.tileset[data->map.data[data->window.startDrawingArea.y + y][data->window.startDrawingArea.x + x].possiblesTilesID[0]].getTexture();
                 drawTexture(cr, *texture, x * 16, y * 16, 1.0, 1.0);
             }
         }
     return true;
+}
+
+bool onKeyPressed(GdkEventKey *event, t_data *data)
+{
+    bool redraw = false;
+    std::string keyname = gdk_keyval_name(event->keyval);
+    if (keyname == "Escape")
+        exit(0);
+    else if ((keyname == "z" || keyname == "w") && data->window.startDrawingArea.y > 0)
+    {
+        data->window.startDrawingArea.y--;
+        redraw = true;
+    }
+    else if (keyname == "s" && data->window.startDrawingArea.y + 20 < data->map.height)
+    {
+        data->window.startDrawingArea.y++;
+        redraw = true;
+    }
+    else if ((keyname == "a" || keyname == "q") && data->window.startDrawingArea.x > 0)
+    {
+        data->window.startDrawingArea.x--;
+        redraw = true;
+    }
+    else if (keyname == "d" && data->window.startDrawingArea.x + 20 < data->map.width)
+    {
+        data->window.startDrawingArea.x++;
+        redraw = true;
+    }
+
+    if (redraw)
+        data->window.drawingArea->queue_draw();
+    return (true);
 }
