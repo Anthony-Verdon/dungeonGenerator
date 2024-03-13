@@ -39,13 +39,6 @@ void generateMap(t_data *data)
 
 void completeMap(t_data *data)
 {
-    Gtk::FileChooserDialog window("Please choose a file", Gtk::FILE_CHOOSER_ACTION_OPEN);
-    
-    window.set_modal(true);
-    window.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
-    window.add_button("_Open", Gtk::RESPONSE_OK);
-    window.run();
-    
     /*
     need to create something to check if the file is ok
     -> good values
@@ -54,12 +47,25 @@ void completeMap(t_data *data)
     maybe create another class for this,
     or update ruleFileParser into fileParser with 2 differents sections
     */
-    std::string filename = window.get_filename();
-    if (!filename.empty() /* && initMapValid*/)
+    if (true /*initMapValid*/)
     {
-        data->map = DungeonGenerator::generateMap(filename);
+        data->map = DungeonGenerator::generateMap(data->prefilledMapPath);
         data->window.drawingArea->queue_draw();
     }
+}
+
+void choosePrefilledMap(t_data *data)
+{
+    Gtk::FileChooserDialog window("Please choose a file", Gtk::FILE_CHOOSER_ACTION_OPEN);
+    
+    window.set_modal(true);
+    window.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
+    window.add_button("_Open", Gtk::RESPONSE_OK);
+    window.run();
+
+    std::string filename = window.get_filename();
+    if (!filename.empty())
+        data->prefilledMapPath = filename;
 }
 
 void chooseRuleFile(t_data *data)

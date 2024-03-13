@@ -24,6 +24,7 @@ int main(int argc, char *argv[])
         builder->get_widget("width", data.window.width);
         builder->get_widget("height", data.window.height);
         builder->get_widget("chooseRuleFile", data.window.chooseRulePath);
+        builder->get_widget("choosePrefilledMap", data.window.choosePrefilledMap);
         builder->get_widget("completeMap", data.window.completeMap);
         builder->get_widget("saveMap", data.window.saveMap);
         builder->get_widget("drawingArea", data.window.drawingArea);
@@ -32,6 +33,7 @@ int main(int argc, char *argv[])
 
         data.window.generateMap->signal_clicked().connect(sigc::bind<t_data*>(&generateMap, &data));
         data.window.chooseRulePath->signal_clicked().connect(sigc::bind<t_data*>(&chooseRuleFile, &data));
+        data.window.choosePrefilledMap->signal_clicked().connect(sigc::bind<t_data*>(&choosePrefilledMap, &data));
         data.window.completeMap->signal_clicked().connect(sigc::bind<t_data*>(&completeMap, &data));
         data.window.saveMap->signal_clicked().connect(sigc::bind<t_data*>(&saveMap, &data));
         data.window.drawingArea->signal_draw().connect(sigc::bind<t_data*>(&drawMap, &data));

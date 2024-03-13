@@ -15,7 +15,6 @@ Implementation of  Wave Function Collapse Algorithm (generation of a 2D map with
 
 ## need to do
 - check if pre-filled map is fine
-- make the UI better for this option
 
 ## possibilities to add
 - resize tilesize to 16x16 even if it's not the original size

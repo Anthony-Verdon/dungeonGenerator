@@ -33,14 +33,6 @@ t_map DungeonGenerator::generateMap(int width, int height, const std::string &ru
 
 t_map DungeonGenerator::generateMap(const std::string &mapPath)
 {
-    /*
-    need to create something to check if the file is ok
-    -> good values
-    -> be sure that every defined tile can be next to each other
-
-    maybe create another class for this,
-    or update ruleFileParser into fileParser with 2 differents sections
-    */
     t_map map = fileGenerator::parseFile(mapPath);
     srand(time(NULL));
     for (int y = 0; y < map.height; y++)
