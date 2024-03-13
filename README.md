@@ -14,4 +14,5 @@ Implementation of  Wave Function Collapse Algorithm (generation of a 2D map with
 
 ## possibilities to add
 - give a map in entrance
+- resize tilesize to 16x16 even if it's not the original size
 - make the UI prettier
