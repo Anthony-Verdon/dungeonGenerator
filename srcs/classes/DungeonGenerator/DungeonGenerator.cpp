@@ -2,6 +2,7 @@
 #include "../../globals.hpp"
 #include "../fileGenerator/fileGenerator.hpp"
 #include "../ruleFileParser/ruleFileParser.hpp"
+#include "../preFilledMapParser/preFilledMapParser.hpp"
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
@@ -33,7 +34,7 @@ t_map DungeonGenerator::generateMap(int width, int height, const std::string &ru
 
 t_map DungeonGenerator::generateMap(const std::string &mapPath)
 {
-    t_map map = fileGenerator::parseFile(mapPath);
+    t_map map = preFilledMapParser::parseFile(mapPath);
     srand(time(NULL));
     for (int y = 0; y < map.height; y++)
     {

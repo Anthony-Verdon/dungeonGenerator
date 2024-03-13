@@ -4,6 +4,7 @@ SRCS += $(wildcard srcs/classes/Utils/*.cpp)
 SRCS += $(wildcard srcs/classes/DungeonGenerator/*.cpp)
 SRCS += $(wildcard srcs/classes/fileGenerator/*.cpp)
 SRCS += $(wildcard srcs/classes/ruleFileParser/*.cpp)
+SRCS += $(wildcard srcs/classes/preFilledMapParser/*.cpp)
 SRCS += $(wildcard srcs/classes/Tile/*.cpp)
 
 OBJS := $(SRCS:.cpp=.o)

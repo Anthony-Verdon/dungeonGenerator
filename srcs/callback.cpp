@@ -4,6 +4,7 @@
 #include "classes/DungeonGenerator/DungeonGenerator.hpp"
 #include "classes/ruleFileParser/ruleFileParser.hpp"
 #include "classes/fileGenerator/fileGenerator.hpp"
+#include "classes/preFilledMapParser/preFilledMapParser.hpp"
 #include <iostream>
 
 void generateMap(t_data *data)
@@ -39,15 +40,7 @@ void generateMap(t_data *data)
 
 void completeMap(t_data *data)
 {
-    /*
-    need to create something to check if the file is ok
-    -> good values
-    -> be sure that every defined tile can be next to each other
-
-    maybe create another class for this,
-    or update ruleFileParser into fileParser with 2 differents sections
-    */
-    if (true /*initMapValid*/)
+    if (preFilledMapParser::isPreFilledMapValid(data->prefilledMapPath))
     {
         data->map = DungeonGenerator::generateMap(data->prefilledMapPath);
         data->window.drawingArea->queue_draw();
