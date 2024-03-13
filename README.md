@@ -1,15 +1,16 @@
 # dungeonGenerator
 
-implémentation du Wave Function Collapse Algorithm (génération d'une carte 2D)
+Implementation of  Wave Function Collapse Algorithm (generation of a 2D map with a define rule file containing tileset)
 
-dépendances:
+## dependencies
 - gtkmm
 
-options disponibles:
-- choix du rule file
-- affichage de la map
-- sauvegarde de la map
-  
-options à rajouter:
-- choix de la taille de la map (bloqué à 20x20)
-- pouvoir se balader dans une map supérieur à du 20x20
+## possibilities
+- choose the rule file
+- render map
+- save map
+
+## possibilities to add
+- choose map size (20x20 by default)
+- move on a map bigger than 20x20
+- make the UI prettier
