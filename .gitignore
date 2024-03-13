@@ -2,3 +2,4 @@ dungeonGenerator
 lastMapGenerated.txt
 *.o
 .vscode
+UI.glade~
