@@ -77,7 +77,7 @@ void chooseRuleFile(t_data *data)
 }
 
 void saveMap(t_data *data){
-    Gtk::FileChooserDialog window("Please choose a folder", Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER);
+    Gtk::FileChooserDialog window("Please choose a folder", Gtk::FILE_CHOOSER_ACTION_SAVE);
     
     window.set_modal(true);
     window.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
