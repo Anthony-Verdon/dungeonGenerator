@@ -35,7 +35,7 @@
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="label" translatable="yes">width | height</property>
+                    <property name="label" translatable="yes">width                                          height</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
